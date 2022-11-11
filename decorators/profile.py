@@ -29,28 +29,3 @@ def debug_body(fn: Callable) -> Callable:
 
         return fn(req, *args, **kwargs)
     return inner_fn
-
-
-def validate_profile(fn: Callable) -> Callable:
-    @wraps(fn)
-    def inner_fn(req: Request, *args: dict, **kwargs: dict) -> json:
-        body: dict = req.json
-        
-        name: str = body.get('name', None)
-        birthday: str = body.get('birthday', None)
-        race: str = body.get('race', None)
-        classification: str = body.get('classification', None)
-
-        valid_body: bool = name and birthday and race and classification
-        fields: list[str] = ['name', 'birthday', 'race', 'classification']
-        message: str = (
-            'Missing fields.' +
-            'The body must have the following properties: ' +
-            ','.join(fields)
-        )
-
-        if not valid_body:
-            return json({'message': message}, status=400)
-
-        return fn(req, *args, **kwargs)
-    return inner_fn

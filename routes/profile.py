@@ -9,7 +9,7 @@ from bson.objectid import ObjectId
 from models.profile import Profile
 from common.serializer import default
 from common.promise import Promise
-from decorators.profile import inject_customer, debug_body, validate_profile
+from decorators.profile import inject_customer, debug_body
 from decorators.common import validate_body
 
 profile_router = Blueprint('profile_router', url_prefix='/pets')
@@ -45,14 +45,16 @@ async def get_me(req: Request) -> json:
 @profile_router.route('/profiles', methods=['POST'])
 @validate_body
 @inject_customer
-@validate_profile
 async def create(req: Request) -> json:
-    body: dict = req.json
-    profile: Profile = Profile(**body)
-    created: Profile = await promise.resolve(partial(profile.save))
-    return json({
-        'data': loads(created.to_json(), object_hook=default),
-    }, status=201)
+    try:
+        body: dict = req.json
+        profile: Profile = Profile(**body)
+        created: Profile = await promise.resolve(partial(profile.save))
+        return json({
+            'data': loads(created.to_json(), object_hook=default),
+        }, status=201)
+    except Exception as e:
+        return json({'message': e}, status=400)
 
 
 @profile_router.route('/profiles/<pk>', methods=['PATCH'])

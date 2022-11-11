@@ -10,7 +10,6 @@ from models.allergy import Allergy
 from common.serializer import default
 from common.promise import Promise
 from decorators.common import validate_body
-from decorators.allergy import validate_allergy
 
 allergy_router = Blueprint('allergy_router', url_prefix='/pets')
 promise = Promise()
@@ -26,15 +25,17 @@ async def get_by_pet(req: Request, pet_pk: str) -> json:
 
 @allergy_router.route('/<pet_pk>/allergies', methods=['POST'])
 @validate_body
-@validate_allergy
 async def create(req: Request, pet_pk: str) -> json:
-    body: dict = req.json
-    body['pet_id'] = pet_pk
+    try:
+        body: dict = req.json
+        body['pet_id'] = pet_pk
 
-    allergy: Allergy = Allergy(**body)
-    created: dict = await promise.resolve(partial(allergy.save))
+        allergy: Allergy = Allergy(**body)
+        created: dict = await promise.resolve(partial(allergy.save))
 
-    return json({'data': loads(created.to_json(), object_hook=default)}, status=201)
+        return json({'data': loads(created.to_json(), object_hook=default)}, status=201)
+    except Exception as e:
+        return json({'message': e}, status=400)
 
 
 @allergy_router.route('/<pet_pk>/allergies/<allergy_pk>', methods=['DELETE'])
