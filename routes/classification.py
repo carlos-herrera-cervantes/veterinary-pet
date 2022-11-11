@@ -10,7 +10,6 @@ from models.classification import Classification
 from common.serializer import default
 from common.promise import Promise
 from decorators.common import validate_body
-from decorators.classification import validate_classification
 
 classification_router = Blueprint('classification_router', url_prefix='/pets')
 promise = Promise()
@@ -26,12 +25,14 @@ async def get_all(req: Request) -> json:
 
 @classification_router.route('/classifications', methods=['POST'])
 @validate_body
-@validate_classification
 async def create_many(req: Request) -> json:
-    body: dict = req.json
-    classifications: list[Classification] = [Classification(**obj) for obj in body]
-    await promise.resolve(partial(Classification.objects.insert, classifications))
-    return json({'data': 'ok'}, status=201)
+    try:
+        body: dict = req.json
+        classifications: list[Classification] = [Classification(**obj) for obj in body]
+        await promise.resolve(partial(Classification.objects.insert, classifications))
+        return json({'data': 'ok'}, status=201)
+    except Exception as e:
+        return json({'message': e}, status=400)
 
 
 @classification_router.route('/classifications/<pk>', methods=['DELETE'])

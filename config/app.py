@@ -8,7 +8,7 @@ class AppConfig(Enum):
 
 
 class MongoDB(Enum):
-    DEFAULT_DB = os.getenv("MONGO_DB")
+    DEFAULT_DB = os.getenv("MONGO_DB_DEFAULT")
 
 
 class S3(Enum):
