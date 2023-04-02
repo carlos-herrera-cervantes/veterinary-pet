@@ -14,7 +14,7 @@ from models.avatar import Avatar
 from config.app import S3 as S3Config
 from config.aws import S3
 
-avatar_router = Blueprint('avatar_router', url_prefix='/pets')
+avatar_router = Blueprint('avatar_router')
 logger = logging.getLogger(__name__)
 logger_path: str = '[routes][avatar.py]'
 promise = Promise()

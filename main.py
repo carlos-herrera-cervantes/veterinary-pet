@@ -3,7 +3,7 @@ from sanic.response import json
 from sanic.request import Request
 
 from config.db import MongoClient
-from config.app import AppConfig
+from config.app import AppConfig, ApiConfig
 from routes.profile import profile_router
 from routes.allergy import allergy_router
 from routes.classification import classification_router
@@ -19,7 +19,7 @@ v1 = Blueprint.group(
     classification_router,
     race_router,
     avatar_router,
-    url_prefix='/api/v1',
+    url_prefix=f'{ApiConfig.BASE_PATH.value}/v1',
 )
 app.blueprint(v1)
 

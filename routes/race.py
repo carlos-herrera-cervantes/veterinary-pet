@@ -11,7 +11,7 @@ from common.serializer import default
 from common.promise import Promise
 from decorators.common import validate_body
 
-race_router = Blueprint('race_router', url_prefix='/pets')
+race_router = Blueprint('race_router')
 promise = Promise()
 
 
