@@ -11,7 +11,7 @@ from common.serializer import default
 from common.promise import Promise
 from decorators.common import validate_body
 
-classification_router = Blueprint('classification_router', url_prefix='/pets')
+classification_router = Blueprint('classification_router')
 promise = Promise()
 
 

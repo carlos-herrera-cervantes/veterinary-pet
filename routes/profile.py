@@ -12,7 +12,7 @@ from common.promise import Promise
 from decorators.profile import inject_customer, debug_body
 from decorators.common import validate_body
 
-profile_router = Blueprint('profile_router', url_prefix='/pets')
+profile_router = Blueprint('profile_router')
 promise = Promise()
 
 

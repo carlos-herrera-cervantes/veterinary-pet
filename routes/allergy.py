@@ -11,7 +11,7 @@ from common.serializer import default
 from common.promise import Promise
 from decorators.common import validate_body
 
-allergy_router = Blueprint('allergy_router', url_prefix='/pets')
+allergy_router = Blueprint('allergy_router')
 promise = Promise()
 
 
