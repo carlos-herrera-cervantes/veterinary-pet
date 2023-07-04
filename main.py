@@ -25,7 +25,7 @@ app.blueprint(v1)
 
 
 @app.route('/')
-async def health_check(req: Request) -> json:
+async def health_check(_: Request) -> json:
     return json({
         'status': True,
         'message': 'Server is up'
