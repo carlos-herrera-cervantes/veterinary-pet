@@ -15,6 +15,9 @@ def default(document: Document) -> Document:
     if 'classification_id' in document.keys():
         document['classification_id'] = document['classification_id']['$oid']
 
+    if 'race_id' in document.keys():
+        document['race_id'] = document['race_id']['$oid']
+
     if 'created_at' in document.keys():
         document['created_at'] = datetime.fromtimestamp(document['created_at']['$date'] / 1000).isoformat()
         document['updated_at'] = datetime.fromtimestamp(document['updated_at']['$date'] / 1000).isoformat()

@@ -1,16 +1,16 @@
 import boto3
 
 from common.singleton import SingletonMeta
-from config.app import S3 as S3Config
+from config.app import AwsS3Config
 
 
-class S3(metaclass=SingletonMeta):
+class Aws(metaclass=SingletonMeta):
 
     def __init__(self) -> None:
-        self.__s3_endpoint = S3Config.AVATAR_S3_ENDPOINT.value
-        self.__s3_region = S3Config.AVATAR_S3_REGION.value
+        self.__s3_endpoint = AwsS3Config.AVATAR_S3_ENDPOINT.value
+        self.__s3_region = AwsS3Config.AVATAR_S3_REGION.value
 
-    def get_client(self) -> any:
+    def get_s3_client(self) -> any:
         client = boto3.resource(
             's3',
             region_name=self.__s3_region,

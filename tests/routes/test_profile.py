@@ -9,7 +9,7 @@ from bson.objectid import ObjectId
 from config.db import MongoClient
 from models.profile import Profile
 from common.promise import Promise
-from routes.profile import get_all, get_by_customer_id, get_me, create, update, delete_by_id
+from routes.profile import get_all, get_by_customer_id, get_me, create, update, delete_by_id, get_by_id
 
 MongoClient().connect()
 
@@ -47,6 +47,12 @@ class ProfileTests(IsolatedAsyncioTestCase):
         self.assertEqual(res.status, 200)
         self.assertEqual(len(body['data']), 0)
 
+    async def test_get_by_id_should_return_404(self) -> None:
+        req: Mock = Mock()
+        res: json = await get_by_id(req, '636b06207abfba54fd2551f5')
+
+        self.assertEqual(res.status, 404)
+
     async def test_create_should_return_201(self) -> None:
         req: Mock = Mock()
         req.headers = { 'user-id': '636b06207abfba54fd2551f5' }
@@ -73,19 +79,19 @@ class ProfileTests(IsolatedAsyncioTestCase):
             'classification_id': '636da8e4a2a711083582ff15',
         }
         profile: Profile = Profile(**profile_dict)
-        insertResult: Profile = await Promise.resolve(partial(profile.save))
+        insert_result: Profile = await Promise.resolve(partial(profile.save))
 
         req: Mock = Mock()
         req.json = { 'color': 'Blue' }
-        res: json = await update(req, insertResult.pk)
+        res: json = await update(req, insert_result.pk)
 
         self.assertEqual(res.status, 200)
 
-        getResult: Profile = await Promise.resolve(
-            partial(Profile.objects.get, id=ObjectId(insertResult.pk))
+        get_result: Profile = await Promise.resolve(
+            partial(Profile.objects.get, id=ObjectId(insert_result.pk))
         )
 
-        self.assertEqual(getResult.color, 'Blue')
+        self.assertEqual(get_result.color, 'Blue')
 
         await Promise.resolve(partial(Profile.objects.delete))
 
@@ -99,10 +105,10 @@ class ProfileTests(IsolatedAsyncioTestCase):
             'classification_id': '636da8e4a2a711083582ff15',
         }
         profile: Profile = Profile(**profile_dict)
-        insertResult: Profile = await Promise.resolve(partial(profile.save))
+        insert_result: Profile = await Promise.resolve(partial(profile.save))
 
         req: Mock = Mock()
-        res: json = await delete_by_id(req, insertResult.pk)
+        res: json = await delete_by_id(req, insert_result.pk)
 
         self.assertEqual(res.status, 204)
 

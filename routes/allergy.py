@@ -16,10 +16,8 @@ promise = Promise()
 
 
 @allergy_router.route('/<pet_pk>/allergies', methods=['GET'])
-async def get_by_pet(req: Request, pet_pk: str) -> json:
-    allergies: list[Allergy] = await promise.resolve(
-        partial(Allergy.objects, __raw__={'pet_id': ObjectId(pet_pk)}),
-    )
+async def get_by_pet(_: Request, pet_pk: str) -> json:
+    allergies = await promise.resolve(partial(Allergy.objects, __raw__={'pet_id': ObjectId(pet_pk)}))
     return json({'data': loads(allergies.to_json(), object_hook=default)})
 
 
@@ -30,8 +28,8 @@ async def create(req: Request, pet_pk: str) -> json:
         body: dict = req.json
         body['pet_id'] = pet_pk
 
-        allergy: Allergy = Allergy(**body)
-        created: dict = await promise.resolve(partial(allergy.save))
+        allergy = Allergy(**body)
+        created = await promise.resolve(partial(allergy.save))
 
         return json({'data': loads(created.to_json(), object_hook=default)}, status=201)
     except Exception as e:
@@ -39,13 +37,11 @@ async def create(req: Request, pet_pk: str) -> json:
 
 
 @allergy_router.route('/<pet_pk>/allergies/<allergy_pk>', methods=['DELETE'])
-async def delete_by_pet(req: Request, pet_pk: str, allergy_pk: str) -> json:
-    allergies: list[Allergy] = await promise.resolve(
-        partial(
-            Allergy.objects,
-            __raw__={'pet_id': ObjectId(pet_pk), '_id': ObjectId(allergy_pk)},
-        ),
-    )
+async def delete_by_pet(_: Request, pet_pk: str, allergy_pk: str) -> json:
+    allergies = await promise.resolve(partial(
+        Allergy.objects,
+        __raw__={'pet_id': ObjectId(pet_pk), '_id': ObjectId(allergy_pk)}
+    ))
     await promise.resolve(allergies.delete)
 
     return json({}, status=204)
